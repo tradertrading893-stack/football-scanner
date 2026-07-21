@@ -1,48 +1,45 @@
 import asyncio
 
-from scanner import get_today_matches, get_match_info
+from scanner import check_match
 from telegram_bot import send_message
-from filters import match_passes_filter
+
+
+# აქ დროებით მოგვაქვს მატჩები
+# შემდეგ ეტაპზე დავუკავშირებთ Sofascore-ის დღევანდელ მატჩებს
+
+matches = []
 
 
 async def run():
 
-    matches = get_today_matches()
-
-    found = []
+    results = []
 
     for match in matches:
 
-        info = get_match_info(match)
+        data = check_match(match)
 
-        # აქ შემდეგ ეტაპზე ჩაერთვება
-        # ბოლო 2 თამაშის სტატისტიკის შემოწმება
+        if data:
 
-        team_a_stats = {
-            "shots": 0,
-            "shots_on_target": 0,
-            "corners": 0
-        }
-
-        team_b_stats = {
-            "shots": 0,
-            "shots_on_target": 0,
-            "corners": 0
-        }
-
-        if match_passes_filter(team_a_stats, team_b_stats):
-
-            found.append(
-                f"⚽ {info['home']} - {info['away']}"
+            results.append(
+                f"⚽ {data['home']} - {data['away']}\n"
+                f"🏠 გუნდი A: {data['home_stats']}\n"
+                f"🚩 გუნდი B: {data['away_stats']}\n"
             )
 
 
-    if found:
-        message = "🔥 ნაპოვნი თამაშები:\n\n"
-        message += "\n".join(found)
+    if results:
+
+        message = (
+            "🔥 ნაპოვნი მატჩები:\n\n"
+            + "\n".join(results)
+        )
 
     else:
-        message = "დღეს შესაბამისი თამაში ვერ მოიძებნა."
+
+        message = (
+            "დღეს შენი კრიტერიუმებით "
+            "მატჩი ვერ მოიძებნა."
+        )
 
 
     await send_message(message)
