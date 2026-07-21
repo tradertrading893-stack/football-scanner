@@ -1,19 +1,22 @@
-from sofascore import get_match_statistics
+from sofascore import get_team_last_matches, get_match_statistics
 from stats import parse_statistics
-from filters import match_passes_filter
+from team_stats import calculate_average
 
 
-def analyze_match(match_id, team_a, team_b):
+def get_team_statistics(team_id):
 
-    data = get_match_statistics(match_id)
+    matches = get_team_last_matches(team_id)
 
-    if not data:
-        return False
+    stats_list = []
 
-    team_a_stats = parse_statistics(data)
-    team_b_stats = parse_statistics(data)
+    for match in matches:
 
-    return match_passes_filter(
-        team_a_stats,
-        team_b_stats
-    )
+        match_id = match["id"]
+
+        data = get_match_statistics(match_id)
+
+        if data:
+            stats = parse_statistics(data)
+            stats_list.append(stats)
+
+    return calculate_average(stats_list)
