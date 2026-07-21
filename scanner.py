@@ -1,25 +1,19 @@
-import requests
+from sofascore import get_match_statistics
+from stats import parse_statistics
+from filters import match_passes_filter
 
 
-def get_today_matches():
-    url = "https://www.sofascore.com/api/v1/sport/football/scheduled-events/2026-07-22"
+def analyze_match(match_id, team_a, team_b):
 
-    response = requests.get(url)
+    data = get_match_statistics(match_id)
 
-    if response.status_code != 200:
-        return []
+    if not data:
+        return False
 
-    data = response.json()
+    team_a_stats = parse_statistics(data)
+    team_b_stats = parse_statistics(data)
 
-    return data.get("events", [])
-
-
-def get_match_info(event):
-    home = event["homeTeam"]["name"]
-    away = event["awayTeam"]["name"]
-
-    return {
-        "home": home,
-        "away": away,
-        "id": event["id"]
-    }
+    return match_passes_filter(
+        team_a_stats,
+        team_b_stats
+    )
