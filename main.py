@@ -1,20 +1,27 @@
+import asyncio
 from scanner import get_today_matches, get_match_info
+from telegram_bot import send_message
 
 
-def run():
+async def run():
     matches = get_today_matches()
 
-    print(f"ნაპოვნია მატჩები: {len(matches)}")
+    if not matches:
+        await send_message("დღეს შესაბამისი მატჩები ვერ მოიძებნა.")
+        return
+
+    text = "⚽ დღევანდელი მატჩები:\n\n"
 
     for match in matches:
         info = get_match_info(match)
 
-        print(
-            info["home"],
-            "-",
-            info["away"]
+        text += (
+            f"🏟 {info['home']} - {info['away']}\n"
+            f"ID: {info['id']}\n\n"
         )
+
+    await send_message(text)
 
 
 if __name__ == "__main__":
-    run()
+    asyncio.run(run())
