@@ -19,6 +19,21 @@ async def send_message(text):
         "text": text
     }
 
-    response = requests.post(url, data=data)
 
-    print(response.text)
+
+print("Telegram პასუხი:")
+print(response.text)
+         
+                            
+                            
+                            
+                
+    
+
+
+
+
+
+
+
+          
