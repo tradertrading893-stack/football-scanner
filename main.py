@@ -3,8 +3,7 @@ from matches import get_today_matches
 
 
 async def run():
-
- send_message("✅ ტესტი: Football Scanner ბოტი მუშაობს")
+    send_message("✅ ტესტი: Football Scanner ბოტი მუშაობს")
 
     matches = get_today_matches()
 
